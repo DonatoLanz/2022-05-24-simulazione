@@ -57,6 +57,9 @@ public class FXMLController {
     	int mem = Integer.parseInt(txtMemoria.getText()); 
     	List<Track> l = model.calcolaInsieme(t, mem);
     	txtResult.appendText(l.toString());
+    	for(Track tr : l) {
+    		txtResult.appendText(tr.getBytes()+"\n");
+    	}
     	txtResult.appendText("\n Memoria "+model.sommaMem(l));
     }
 
