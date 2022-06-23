@@ -5,10 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+
 import it.polito.tdp.itunes.model.Album;
 import it.polito.tdp.itunes.model.Artist;
+import it.polito.tdp.itunes.model.Coppia;
 import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.MediaType;
 import it.polito.tdp.itunes.model.Playlist;
@@ -139,6 +143,64 @@ public class ItunesDAO {
 		return result;
 	}
 
+	public List<Track> getTracksWithGenre(Genre g, Map<Integer,Track> map){
+		final String sql = "SELECT t.* "
+				+ "FROM track t "
+				+ "WHERE t.GenreId = ? ";
+		
+		List<Track> result = new ArrayList<Track>();
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, g.getGenreId());
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				Track t = new Track(res.getInt("TrackId"), res.getString("Name"), 
+						res.getString("Composer"), res.getInt("Milliseconds"), 
+						res.getInt("Bytes"),res.getDouble("UnitPrice"));
+			
+						result.add(t);
+				        map.put(t.getTrackId(), t);
+			
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return result;
+	}
+	
+	public List<Coppia> getCoppie(Genre g){
+		List<Coppia> listaC = new LinkedList<Coppia>();
+		final String sql = "SELECT t1.TrackId AS tr1, t2.TrackId AS tr2, ABS (t1.Milliseconds - t2.Milliseconds) AS peso "
+				+ "FROM track t1, track t2 "
+				+ "WHERE t1.TrackId > t2.TrackId AND t1.MediaTypeId = t2.MediaTypeId AND t1.GenreId = ? AND t2.GenreId = ? ";
+				
+		
+		
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, g.getGenreId());
+			st.setInt(2, g.getGenreId());
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				Coppia c = new Coppia(res.getInt("tr1"), res.getInt("tr2"), res.getDouble("peso"));
+						listaC.add(c);
+			}
+			conn.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw new RuntimeException("SQL Error");
+		}
+		return listaC;
+		
+		
+	}
 	
 	
 }

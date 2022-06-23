@@ -5,7 +5,11 @@
 package it.polito.tdp.itunes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import it.polito.tdp.itunes.model.CoppiaM;
+import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +41,7 @@ public class FXMLController {
     private ComboBox<?> cmbCanzone; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
-    private ComboBox<?> cmbGenere; // Value injected by FXMLLoader
+    private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
 
     @FXML // fx:id="txtMemoria"
     private TextField txtMemoria; // Value injected by FXMLLoader
@@ -52,12 +56,22 @@ public class FXMLController {
 
     @FXML
     void doCreaGrafo(ActionEvent event) {
-
+        txtResult.clear();
+    	Genre g = cmbGenere.getValue();
+    	String msg = this.model.creaGrafo(g);
+    	txtResult.appendText(msg);
+    	
     }
 
     @FXML
     void doDeltaMassimo(ActionEvent event) {
+    	txtResult.clear();
     	
+    	List<CoppiaM> listaM = this.model.getMigliori();
+    	
+    	for(CoppiaM c : listaM) {
+    		txtResult.appendText(c.getT1().getName()+"---"+c.getT2().getName()+" "+c.getPeso()+"\n");
+    	}
     	
     }
 
@@ -75,6 +89,7 @@ public class FXMLController {
     
     public void setModel(Model model) {
     	this.model = model;
+    	cmbGenere.getItems().addAll(model.getGenre());
     }
 
 }
