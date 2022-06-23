@@ -11,6 +11,7 @@ import java.util.ResourceBundle;
 import it.polito.tdp.itunes.model.CoppiaM;
 import it.polito.tdp.itunes.model.Genre;
 import it.polito.tdp.itunes.model.Model;
+import it.polito.tdp.itunes.model.Track;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -38,7 +39,7 @@ public class FXMLController {
     private Button btnMassimo; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbCanzone"
-    private ComboBox<?> cmbCanzone; // Value injected by FXMLLoader
+    private ComboBox<Track> cmbCanzone; // Value injected by FXMLLoader
 
     @FXML // fx:id="cmbGenere"
     private ComboBox<Genre> cmbGenere; // Value injected by FXMLLoader
@@ -52,6 +53,11 @@ public class FXMLController {
     @FXML
     void btnCreaLista(ActionEvent event) {
 
+    	Track t = cmbCanzone.getValue();
+    	int mem = Integer.parseInt(txtMemoria.getText()); 
+    	List<Track> l = model.calcolaInsieme(t, mem);
+    	txtResult.appendText(l.toString());
+    	txtResult.appendText("\n Memoria "+model.sommaMem(l));
     }
 
     @FXML
@@ -72,7 +78,7 @@ public class FXMLController {
     	for(CoppiaM c : listaM) {
     		txtResult.appendText(c.getT1().getName()+"---"+c.getT2().getName()+" "+c.getPeso()+"\n");
     	}
-    	
+    	cmbCanzone.getItems().addAll(model.getV());
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
